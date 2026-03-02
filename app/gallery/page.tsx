@@ -24,7 +24,7 @@ export default function GalleryPage() {
         const { data: sessionData } = await supabase.auth.getSession();
 
         if (!sessionData.session) {
-          router.replace('/login');
+          router.replace('/');
           return;
         }
 
@@ -49,6 +49,12 @@ export default function GalleryPage() {
 
     void load();
   }, [router]);
+
+  const handleSignOut = async () => {
+    const supabase = getBrowserSupabaseClient();
+    await supabase.auth.signOut();
+    router.replace('/');
+  };
 
   if (!authChecked || isLoading) {
     return (
@@ -85,7 +91,16 @@ export default function GalleryPage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center p-8">
-      <h1 className="mb-6 text-3xl font-bold">Gallery</h1>
+      <div className="flex w-full max-w-4xl items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold">Gallery</h1>
+        <button
+          type="button"
+          onClick={handleSignOut}
+          className="rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-800 hover:bg-gray-50"
+        >
+          Log out
+        </button>
+      </div>
       <div className="grid w-full max-w-4xl grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-4">
         {images.map((img) => (
           <div
