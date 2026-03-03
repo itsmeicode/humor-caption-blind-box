@@ -267,13 +267,21 @@ export default function GalleryPage() {
     <main className="flex min-h-screen flex-col items-center p-8">
       <div className="mb-6 flex w-full max-w-4xl items-center justify-between">
         <h1 className="text-3xl font-bold">Gallery</h1>
-        <button
-          type="button"
-          onClick={handleSignOut}
-          className="rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-800 hover:bg-gray-50"
-        >
-          Log out
-        </button>
+        <div className="flex items-center gap-3">
+          <a
+            href="/upload"
+            className="rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-800 hover:bg-gray-50"
+          >
+            Upload & caption
+          </a>
+          <button
+            type="button"
+            onClick={handleSignOut}
+            className="rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-800 hover:bg-gray-50"
+          >
+            Log out
+          </button>
+        </div>
       </div>
       <div className="w-full max-w-2xl">
         <div className="flex flex-col items-center rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
