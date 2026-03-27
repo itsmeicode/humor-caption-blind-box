@@ -84,10 +84,23 @@ export default function CollectionPage() {
     [images, selectedImageId]
   );
 
+  const isDuplicateMatch = useMemo(() => {
+    if (!selectedJoke || !selectedImage) return false;
+    return matches.some(
+      (m) =>
+        m.joke.captionId === selectedJoke.captionId &&
+        m.image.imageId === selectedImage.imageId
+    );
+  }, [matches, selectedJoke, selectedImage]);
+
   const createMatch = () => {
     setError(null);
     if (!selectedJoke || !selectedImage) {
       setError('Pick one joke and one image to create a match.');
+      return;
+    }
+    if (isDuplicateMatch) {
+      setError('You already created this joke and image match.');
       return;
     }
     const createdAt = new Date().toISOString();
@@ -164,7 +177,10 @@ export default function CollectionPage() {
             ) : (
               <select
                 value={selectedJokeId}
-                onChange={(e) => setSelectedJokeId(e.target.value)}
+                onChange={(e) => {
+                  setError(null);
+                  setSelectedJokeId(e.target.value);
+                }}
                 className="w-full rounded-md border border-gray-300 bg-white p-2 text-sm"
               >
                 <option value="">Pick a joke…</option>
@@ -192,7 +208,10 @@ export default function CollectionPage() {
             ) : (
               <select
                 value={selectedImageId}
-                onChange={(e) => setSelectedImageId(e.target.value)}
+                onChange={(e) => {
+                  setError(null);
+                  setSelectedImageId(e.target.value);
+                }}
                 className="w-full rounded-md border border-gray-300 bg-white p-2 text-sm"
               >
                 <option value="">Pick an image…</option>
@@ -213,14 +232,25 @@ export default function CollectionPage() {
           </div>
         </div>
 
-        <div className="flex items-center justify-end">
+        <div className="flex flex-col items-end gap-2">
           <button
             type="button"
             onClick={createMatch}
-            className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+            disabled={!selectedJoke || !selectedImage || isDuplicateMatch}
+            title={
+              isDuplicateMatch
+                ? 'This joke and image are already in your matches.'
+                : undefined
+            }
+            className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Create Match
           </button>
+          {isDuplicateMatch && selectedJoke && selectedImage && (
+            <p className="max-w-md text-right text-sm text-amber-800 dark:text-amber-200">
+              This joke and image are already matched—pick a different combo.
+            </p>
+          )}
         </div>
 
         <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
