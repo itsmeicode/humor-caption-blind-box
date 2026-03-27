@@ -10,6 +10,16 @@ import {
   type PipelineResult,
 } from '@/lib/almostcrackdApi';
 
+type UploadHistoryItem = {
+  id: string;
+  createdAt: string;
+  imageId: string;
+  cdnUrl: string;
+  captions: string[];
+};
+
+const LS_UPLOAD_HISTORY_KEY = 'blindBoxUploadHistory';
+
 export default function UploadPage() {
   const router = useRouter();
   const [authChecked, setAuthChecked] = useState(false);
@@ -18,6 +28,7 @@ export default function UploadPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<PipelineResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [uploadHistory, setUploadHistory] = useState<UploadHistoryItem[]>([]);
 
   const addUploadedImageToCollection = (pipeline: PipelineResult) => {
     if (typeof window === 'undefined') return;
@@ -41,6 +52,58 @@ export default function UploadPage() {
     }
   };
 
+  const extractCaptionStrings = (pipeline: PipelineResult): string[] => {
+    const out: string[] = [];
+    for (const item of pipeline.captions) {
+      if (typeof item === 'string') {
+        const trimmed = item.trim();
+        if (trimmed) out.push(trimmed);
+        continue;
+      }
+      if (item && typeof item === 'object' && 'content' in item) {
+        const content = (item as { content?: unknown }).content;
+        if (typeof content === 'string' && content.trim()) out.push(content.trim());
+      }
+    }
+    return out;
+  };
+
+  const loadUploadHistory = () => {
+    if (typeof window === 'undefined') return;
+    try {
+      const raw = window.localStorage.getItem(LS_UPLOAD_HISTORY_KEY);
+      const parsed = raw ? (JSON.parse(raw) as UploadHistoryItem[]) : [];
+      setUploadHistory(Array.isArray(parsed) ? parsed : []);
+    } catch {
+      setUploadHistory([]);
+    }
+  };
+
+  const appendUploadHistory = (pipeline: PipelineResult) => {
+    if (typeof window === 'undefined') return;
+    if (!pipeline.cdnUrl || !pipeline.imageId) return;
+
+    const captions = extractCaptionStrings(pipeline);
+    const createdAt = new Date().toISOString();
+    const entry: UploadHistoryItem = {
+      id: `${pipeline.imageId}:${createdAt}`,
+      createdAt,
+      imageId: pipeline.imageId,
+      cdnUrl: pipeline.cdnUrl,
+      captions,
+    };
+
+    setUploadHistory((prev) => {
+      const next = [entry, ...prev].slice(0, 20);
+      try {
+        window.localStorage.setItem(LS_UPLOAD_HISTORY_KEY, JSON.stringify(next));
+      } catch {
+        // ignore localStorage failures
+      }
+      return next;
+    });
+  };
+
   useEffect(() => {
     const supabase = getBrowserSupabaseClient();
     const check = async () => {
@@ -50,6 +113,7 @@ export default function UploadPage() {
         return;
       }
       setAuthChecked(true);
+      loadUploadHistory();
     };
     void check();
   }, [router]);
@@ -93,6 +157,7 @@ export default function UploadPage() {
       const pipelineResult = await uploadAndGenerateCaptions(token, file);
       setResult(pipelineResult);
       addUploadedImageToCollection(pipelineResult);
+      appendUploadHistory(pipelineResult);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed.');
     } finally {
@@ -202,6 +267,57 @@ export default function UploadPage() {
             </ul>
           </div>
         )}
+
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Upload History</h2>
+            <button
+              type="button"
+              onClick={loadUploadHistory}
+              className="rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-800 hover:bg-gray-50"
+            >
+              Refresh
+            </button>
+          </div>
+          {uploadHistory.length === 0 ? (
+            <p className="text-sm text-gray-600">
+              No uploads yet. Upload an image to generate captions.
+            </p>
+          ) : (
+            <div className="space-y-4">
+              {uploadHistory.map((h) => (
+                <div
+                  key={h.id}
+                  className="rounded-xl border border-gray-200 bg-white p-4"
+                >
+                  <img
+                    src={h.cdnUrl}
+                    alt=""
+                    className="mb-3 max-h-[45vh] w-full rounded-lg bg-gray-50 object-contain"
+                  />
+                  <p className="text-xs text-gray-600">
+                    {new Date(h.createdAt).toLocaleString()}
+                  </p>
+                  <p className="mt-1 text-xs text-gray-600">Image ID: {h.imageId}</p>
+                  <h3 className="mt-3 text-sm font-medium text-gray-800">
+                    Captions
+                  </h3>
+                  {h.captions.length === 0 ? (
+                    <p className="mt-1 text-sm text-gray-600">
+                      No captions found in the response.
+                    </p>
+                  ) : (
+                    <ul className="mt-1 list-inside list-disc space-y-1 text-sm text-gray-800">
+                      {h.captions.map((c, idx) => (
+                        <li key={`${h.id}:${idx}`}>{c}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </main>
   );

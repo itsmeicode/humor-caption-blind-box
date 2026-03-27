@@ -493,13 +493,22 @@ export default function GalleryPage() {
               </div>
               {(() => {
                 const current = Math.max(0, blindBoxVoteCount);
-                const cycle = 15;
+                const step = 5;
+                const windowSize = 15;
 
-                const base = current < cycle ? 0 : Math.floor(current / cycle) * cycle;
-                const a = base + 5;
-                const b = base + 10;
-                const c = base + 15;
-                const pct = ((current - base) / cycle) * 100;
+                // Under 15 votes: show 5/10/15.
+                // After that: keep the recently completed segment visible by sliding a 15-vote window
+                // that starts 5 votes before the last reward (e.g. at 15 => 10..25).
+                const lastReward = Math.floor(current / step) * step;
+                const start = current < windowSize ? 0 : Math.max(0, lastReward - step);
+                const end = start + windowSize;
+                const pct = ((current - start) / (end - start)) * 100;
+
+                const showLeftLabel = start !== 0;
+                const l0 = start; // left edge
+                const l1 = start + 5;
+                const l2 = start + 10;
+                const l3 = start + 15; // right edge
                 return (
                   <div className="relative">
                     <div className="relative h-2 w-full overflow-hidden rounded-full bg-gray-100">
@@ -516,13 +525,16 @@ export default function GalleryPage() {
                       </div>
                     </div>
                     <div className="relative mt-1 h-4 text-[11px] text-gray-600">
+                      {showLeftLabel ? (
+                        <span className="absolute left-0">{l0}</span>
+                      ) : null}
                       <span className="absolute left-1/3 -translate-x-1/2">
-                        {a}
+                        {l1}
                       </span>
                       <span className="absolute left-2/3 -translate-x-1/2">
-                        {b}
+                        {l2}
                       </span>
-                      <span className="absolute right-0 translate-x-0">{c}</span>
+                      <span className="absolute right-0 translate-x-0">{l3}</span>
                     </div>
                   </div>
                 );
