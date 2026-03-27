@@ -48,6 +48,10 @@ html[data-theme='dark'] .bg-gray-50 {
   background-color: #0f172a !important;
 }
 
+html[data-theme='dark'] .bg-gray-100 {
+  background-color: #334155 !important;
+}
+
 html[data-theme='dark'] .text-gray-900 {
   color: #f8fafc !important;
 }
@@ -73,19 +77,6 @@ html[data-theme='dark'] .border-gray-300 {
 
 html[data-theme='dark'] .hover\:bg-gray-50:hover {
   background-color: #1f2937 !important;
-}
-
-html[data-theme='dark'] .bg-gray-900 {
-  background-color: #e5e7eb !important;
-}
-
-html[data-theme='dark'] .hover\:bg-gray-800:hover,
-html[data-theme='dark'] .hover\:bg-gray-900:hover {
-  background-color: #f8fafc !important;
-}
-
-html[data-theme='dark'] .text-white {
-  color: #0b1220 !important;
 }
 
 html[data-theme='dark'] .disabled\:bg-gray-400:disabled {
@@ -115,4 +106,8 @@ html[data-theme='dark'] a {
 
 html[data-theme='dark'] a:hover {
   color: #ffffff;
+}
+
+html[data-theme='dark'] .from-gray-50.to-white {
+  background-image: linear-gradient(to bottom, #020617, #0b1220) !important;
 }
