@@ -77,13 +77,6 @@ export function BlindBoxReward({
           <div className="mt-4 flex items-center justify-end gap-3">
             <button
               type="button"
-              onClick={() => setPicked(null)}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-800 hover:bg-gray-50"
-            >
-              Pick again
-            </button>
-            <button
-              type="button"
               onClick={() => {
                 const selected = reveal;
                 if (selected) onPick(selected);

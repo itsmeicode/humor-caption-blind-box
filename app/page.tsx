@@ -46,7 +46,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-center p-8">
       <h1 className="mb-4 text-3xl font-bold">Caption Blind Box</h1>
       <p className="mb-4 max-w-md text-center text-sm text-gray-600">
-        Sign in to rate captions. Every 5 votes unlocks a blind box reward.
+        Sign in to rate captions. Every 5 votes unlocks a blind box reward!
       </p>
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
       <button
