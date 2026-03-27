@@ -88,9 +88,8 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-8">
-      <div className="mx-auto flex w-full max-w-4xl flex-col items-center justify-center py-10">
-        <div className="w-full rounded-3xl border border-gray-200 bg-white/80 p-8 shadow-sm backdrop-blur">
+    <main className="flex min-h-screen items-center justify-center bg-gradient-to-b from-gray-50 to-white p-8">
+      <div className="w-full max-w-4xl rounded-3xl border border-gray-200 bg-white/80 p-8 shadow-sm backdrop-blur">
           <div className="flex flex-col items-center text-center">
             <p className="mb-2 text-xs font-semibold tracking-widest text-gray-500">
               WELCOME TO THE ARCADE
@@ -172,7 +171,6 @@ export default function Home() {
             </p>
           </div>
         </div>
-      </div>
     </main>
   );
 }
