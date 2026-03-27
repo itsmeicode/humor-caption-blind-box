@@ -41,10 +41,17 @@ export default function GalleryPage() {
     []
   );
   const [captionPool, setCaptionPool] = useState<Caption[]>([]);
+  const [blindBoxVoteCount, setBlindBoxVoteCount] = useState(0);
   const [showBlindBox, setShowBlindBox] = useState(false);
   const [rewardType, setRewardType] = useState<RewardType>('joke');
   const [rewardOptions, setRewardOptions] = useState<RewardOption[]>([]);
   const [rewardError, setRewardError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const current = Number(window.localStorage.getItem(LS_KEYS.voteCount) ?? '0');
+    setBlindBoxVoteCount(Number.isFinite(current) ? current : 0);
+  }, []);
 
   useEffect(() => {
     const supabase = getBrowserSupabaseClient();
@@ -410,6 +417,7 @@ export default function GalleryPage() {
     const current = Number(window.localStorage.getItem(LS_KEYS.voteCount) ?? '0');
     const next = Number.isFinite(current) ? current + 1 : 1;
     window.localStorage.setItem(LS_KEYS.voteCount, String(next));
+    setBlindBoxVoteCount(next);
     if (next % 5 === 0) {
       const rewardIndex = Math.floor(next / 5);
       const nextType: RewardType = rewardIndex % 2 === 1 ? 'joke' : 'image';
@@ -450,6 +458,29 @@ export default function GalleryPage() {
         </div>
       </div>
       <div className="w-full max-w-2xl">
+        {!showBlindBox && (
+          <div className="mb-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-sm font-medium text-gray-900">
+                Next blind box
+              </p>
+              <p className="text-sm text-gray-600">
+                {((blindBoxVoteCount % 5) + 5) % 5}/5 votes
+              </p>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
+              <div
+                className="h-full bg-gray-900"
+                style={{
+                  width: `${((((blindBoxVoteCount % 5) + 5) % 5) / 5) * 100}%`,
+                }}
+              />
+            </div>
+            <p className="mt-2 text-xs text-gray-600">
+              Vote {5 - ((((blindBoxVoteCount % 5) + 5) % 5) || 5)} more to unlock a mystery reward.
+            </p>
+          </div>
+        )}
         {showBlindBox ? (
           <div className="space-y-3">
             {rewardError && (
