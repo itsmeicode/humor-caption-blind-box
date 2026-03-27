@@ -436,15 +436,18 @@ export default function GalleryPage() {
           Caption Blind Box
         </a>
         <div className="flex items-center gap-4">
-          <nav className="flex items-center gap-4 text-sm text-gray-700">
+          <nav className="flex items-center gap-3">
             <a
               href="/collection"
-              className="hover:text-gray-900 hover:underline"
+              className="rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-800 hover:bg-gray-50"
             >
-              My collection
+              My Collection
             </a>
-            <a href="/upload" className="hover:text-gray-900 hover:underline">
-              Upload image
+            <a
+              href="/upload"
+              className="rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-800 hover:bg-gray-50"
+            >
+              Upload Image
             </a>
           </nav>
           <button
@@ -457,29 +460,6 @@ export default function GalleryPage() {
         </div>
       </div>
       <div className="w-full max-w-2xl">
-        {!showBlindBox && (
-          <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-            <div className="mb-2 flex items-center justify-between">
-              <p className="text-sm font-medium text-gray-900">
-                Next blind box
-              </p>
-              <p className="text-sm text-gray-600">
-                {((blindBoxVoteCount % 5) + 5) % 5}/5 votes
-              </p>
-            </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
-              <div
-                className="h-full bg-gray-900"
-                style={{
-                  width: `${((((blindBoxVoteCount % 5) + 5) % 5) / 5) * 100}%`,
-                }}
-              />
-            </div>
-            <p className="mt-2 text-xs text-gray-600">
-              Vote {5 - ((((blindBoxVoteCount % 5) + 5) % 5) || 5)} more to unlock a mystery reward.
-            </p>
-          </div>
-        )}
         {showBlindBox ? (
           <div className="space-y-3">
             {rewardError && (
@@ -504,6 +484,36 @@ export default function GalleryPage() {
             <p className="mb-4 text-center text-lg font-semibold text-gray-900">
               {caption.content}
             </p>
+            <div className="mb-5 w-full">
+              <div className="mb-1 flex items-center justify-between text-xs text-gray-600">
+                <span>Total votes: {blindBoxVoteCount}</span>
+                <span>Rewards at 5 • 10 • 15</span>
+              </div>
+              {(() => {
+                const cycle = 15;
+                const inCycle =
+                  ((blindBoxVoteCount % cycle) + cycle) % cycle;
+                const pct = (inCycle / cycle) * 100;
+                return (
+                  <div className="relative h-2 w-full overflow-hidden rounded-full bg-gray-100">
+                    <div
+                      className="h-full bg-gray-900"
+                      style={{ width: `${pct}%` }}
+                    />
+                    <div className="absolute inset-0">
+                      <div className="absolute left-1/3 top-0 h-full w-px bg-gray-300" />
+                      <div className="absolute left-2/3 top-0 h-full w-px bg-gray-300" />
+                      <div className="absolute right-0 top-0 h-full w-px bg-gray-300" />
+                    </div>
+                  </div>
+                );
+              })()}
+              <div className="mt-1 flex items-center justify-between text-[11px] text-gray-600">
+                <span>5</span>
+                <span>10</span>
+                <span>15</span>
+              </div>
+            </div>
             <CaptionVoteControls
               captionId={caption.id}
               onVoted={() => {

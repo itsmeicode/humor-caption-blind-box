@@ -120,11 +120,17 @@ export default function CollectionPage() {
           Caption Blind Box
         </a>
         <div className="flex items-center gap-4">
-          <nav className="flex items-center gap-4 text-sm text-gray-700">
-            <a href="/upload" className="hover:text-gray-900 hover:underline">
-              Upload image
+          <nav className="flex items-center gap-3">
+            <a
+              href="/upload"
+              className="rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-800 hover:bg-gray-50"
+            >
+              Upload Image
             </a>
-            <a href="/gallery" className="hover:text-gray-900 hover:underline">
+            <a
+              href="/gallery"
+              className="rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-800 hover:bg-gray-50"
+            >
               Rate
             </a>
           </nav>
