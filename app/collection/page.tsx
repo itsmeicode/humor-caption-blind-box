@@ -156,10 +156,10 @@ export default function CollectionPage() {
 
         <div className="grid gap-6 md:grid-cols-2">
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
-            <h2 className="mb-3 text-lg font-semibold">Unlocked jokes</h2>
+            <h2 className="mb-3 text-lg font-semibold">Unlocked Jokes</h2>
             {jokes.length === 0 ? (
               <p className="text-sm text-gray-600">
-                No jokes yet. Vote to unlock blind boxes.
+                No jokes yet. Vote more to unlock jokes.
               </p>
             ) : (
               <select
@@ -184,7 +184,7 @@ export default function CollectionPage() {
           </div>
 
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
-            <h2 className="mb-3 text-lg font-semibold">Unlocked images</h2>
+            <h2 className="mb-3 text-lg font-semibold">Unlocked Images</h2>
             {images.length === 0 ? (
               <p className="text-sm text-gray-600">
                 No images yet. Vote more to unlock images.
@@ -219,12 +219,12 @@ export default function CollectionPage() {
             onClick={createMatch}
             className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
           >
-            Create match
+            Create Match
           </button>
         </div>
 
         <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
-          <h2 className="mb-3 text-lg font-semibold">My matches</h2>
+          <h2 className="mb-3 text-lg font-semibold">My Matches</h2>
           {matches.length === 0 ? (
             <p className="text-sm text-gray-600">
               No matches yet—create your first combo.

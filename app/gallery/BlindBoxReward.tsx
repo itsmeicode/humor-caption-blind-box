@@ -63,7 +63,7 @@ export function BlindBoxReward({
       ) : (
         <div className="w-full">
           <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
-            <p className="text-base font-semibold text-gray-900">Your reward</p>
+            <p className="text-base font-semibold text-gray-900">Your Reward</p>
             {reveal?.type === 'joke' ? (
               <p className="mt-2 text-sm text-gray-800">{reveal.content}</p>
             ) : reveal?.type === 'image' ? (

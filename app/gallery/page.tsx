@@ -494,11 +494,20 @@ export default function GalleryPage() {
               {(() => {
                 const current = Math.max(0, blindBoxVoteCount);
                 const cycle = 15;
-                const inCycle = current % cycle;
-                const a = 5;
-                const b = 10;
-                const c = 15;
-                const pct = (inCycle / cycle) * 100;
+
+                // Keep progress continuous by showing: last_two_rewards + next_reward
+                // Example after hitting 15: show 10 (left), 15 (tick), 25 (right)
+                const lastReward = Math.floor(current / 5) * 5;
+                const start =
+                  current < cycle ? 0 : Math.max(0, lastReward - 5);
+                const end = current < cycle ? 15 : start + 15;
+
+                const a = current < cycle ? 5 : start;
+                const b = current < cycle ? 10 : lastReward;
+                const c = current < cycle ? 15 : end;
+
+                const pct =
+                  end === start ? 0 : ((current - start) / (end - start)) * 100;
                 return (
                   <div className="relative">
                     <div className="relative h-2 w-full overflow-hidden rounded-full bg-gray-100">
@@ -515,15 +524,11 @@ export default function GalleryPage() {
                       </div>
                     </div>
                     <div className="relative mt-1 h-4 text-[11px] text-gray-600">
+                      <span className="absolute left-0 -translate-x-0">{a}</span>
                       <span className="absolute left-1/3 -translate-x-1/2">
-                        {a}
-                      </span>
-                      <span className="absolute left-2/3 -translate-x-1/2">
                         {b}
                       </span>
-                      <span className="absolute right-0 translate-x-0">
-                        {c}
-                      </span>
+                      <span className="absolute right-0 translate-x-0">{c}</span>
                     </div>
                   </div>
                 );
