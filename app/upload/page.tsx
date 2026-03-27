@@ -19,6 +19,28 @@ export default function UploadPage() {
   const [result, setResult] = useState<PipelineResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const addUploadedImageToCollection = (pipeline: PipelineResult) => {
+    if (typeof window === 'undefined') return;
+    if (!pipeline.cdnUrl || !pipeline.imageId) return;
+
+    const key = 'blindBoxUnlockedImages';
+    type ImageUnlock = { imageId: string; url: string };
+    const imageId = `upload:${pipeline.imageId}`;
+
+    try {
+      const existingRaw = window.localStorage.getItem(key);
+      const existing = (existingRaw ? (JSON.parse(existingRaw) as ImageUnlock[]) : []) ?? [];
+      if (existing.some((im) => im.imageId === imageId)) return;
+      const updated: ImageUnlock[] = [
+        { imageId, url: pipeline.cdnUrl },
+        ...existing,
+      ];
+      window.localStorage.setItem(key, JSON.stringify(updated));
+    } catch {
+      // ignore localStorage failures
+    }
+  };
+
   useEffect(() => {
     const supabase = getBrowserSupabaseClient();
     const check = async () => {
@@ -70,6 +92,7 @@ export default function UploadPage() {
     try {
       const pipelineResult = await uploadAndGenerateCaptions(token, file);
       setResult(pipelineResult);
+      addUploadedImageToCollection(pipelineResult);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed.');
     } finally {
