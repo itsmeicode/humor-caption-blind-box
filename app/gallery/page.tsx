@@ -476,43 +476,57 @@ export default function GalleryPage() {
           </div>
         ) : (
           <div className="flex flex-col items-center rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
-            <img
-              src={image.url}
-              alt=""
-              className="mb-6 max-h-[70vh] w-full rounded-xl bg-gray-50 object-contain"
-            />
+            <div className="mb-6 flex h-[55vh] w-full items-center justify-center overflow-hidden rounded-xl bg-gray-50">
+              <img
+                src={image.url}
+                alt=""
+                className="h-full w-full object-contain"
+              />
+            </div>
             <p className="mb-4 text-center text-lg font-semibold text-gray-900">
               {caption.content}
             </p>
             <div className="mb-5 w-full">
               <div className="mb-1 flex items-center justify-between text-xs text-gray-600">
                 <span>Total votes: {blindBoxVoteCount}</span>
-                <span>Rewards at 5 • 10 • 15</span>
+                <span>Rewards every 5 votes</span>
               </div>
               {(() => {
-                const cycle = 15;
-                const inCycle =
-                  ((blindBoxVoteCount % cycle) + cycle) % cycle;
-                const pct = (inCycle / cycle) * 100;
+                const current = Math.max(0, blindBoxVoteCount);
+                const base = Math.floor(current / 5) * 5;
+                const a = base + 5;
+                const b = base + 10;
+                const c = base + 15;
+                const pct = ((current - base) / 15) * 100;
                 return (
-                  <div className="relative h-2 w-full overflow-hidden rounded-full bg-gray-100">
-                    <div
-                      className="h-full bg-gray-900"
-                      style={{ width: `${pct}%` }}
-                    />
-                    <div className="absolute inset-0">
-                      <div className="absolute left-1/3 top-0 h-full w-px bg-gray-300" />
-                      <div className="absolute left-2/3 top-0 h-full w-px bg-gray-300" />
-                      <div className="absolute right-0 top-0 h-full w-px bg-gray-300" />
+                  <div className="relative">
+                    <div className="relative h-2 w-full overflow-hidden rounded-full bg-gray-100">
+                      <div
+                        className="h-full bg-gray-900"
+                        style={{
+                          width: `${Math.max(0, Math.min(100, pct))}%`,
+                        }}
+                      />
+                      <div className="absolute inset-0">
+                        <div className="absolute left-1/3 top-0 h-full w-px bg-gray-300" />
+                        <div className="absolute left-2/3 top-0 h-full w-px bg-gray-300" />
+                        <div className="absolute right-0 top-0 h-full w-px bg-gray-300" />
+                      </div>
+                    </div>
+                    <div className="relative mt-1 h-4 text-[11px] text-gray-600">
+                      <span className="absolute left-1/3 -translate-x-1/2">
+                        {a}
+                      </span>
+                      <span className="absolute left-2/3 -translate-x-1/2">
+                        {b}
+                      </span>
+                      <span className="absolute right-0 translate-x-0">
+                        {c}
+                      </span>
                     </div>
                   </div>
                 );
               })()}
-              <div className="mt-1 flex items-center justify-between text-[11px] text-gray-600">
-                <span>5</span>
-                <span>10</span>
-                <span>15</span>
-              </div>
             </div>
             <CaptionVoteControls
               captionId={caption.id}
