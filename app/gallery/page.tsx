@@ -519,20 +519,15 @@ export default function GalleryPage() {
               </div>
             )}
             <div className="mb-5 w-full">
-              <div className="mb-1 flex items-center justify-between text-xs text-gray-600">
-                <span>Total votes: {blindBoxVoteCount}</span>
-                <span>Rewards every 5 votes</span>
-              </div>
               {(() => {
                 const current = Math.max(0, blindBoxVoteCount);
                 const step = 5;
                 const windowSize = 15;
-
                 const lastReward = Math.floor(current / step) * step;
-                const start = current < windowSize ? 0 : Math.max(0, lastReward - step);
+                const start =
+                  current < windowSize ? 0 : Math.max(0, lastReward - step);
                 const end = start + windowSize;
                 const pct = ((current - start) / (end - start)) * 100;
-
                 const showLeftLabel = start !== 0;
                 const l0 = start;
                 const l1 = start + 5;
@@ -563,7 +558,9 @@ export default function GalleryPage() {
                       <span className="absolute left-2/3 -translate-x-1/2">
                         {l2}
                       </span>
-                      <span className="absolute right-0 translate-x-0">{l3}</span>
+                      <span className="absolute right-0 translate-x-0">
+                        {l3}
+                      </span>
                     </div>
                   </div>
                 );
@@ -577,6 +574,31 @@ export default function GalleryPage() {
                 void loadNextCaption();
               }}
             />
+            {(() => {
+              const current = Math.max(0, blindBoxVoteCount);
+              const step = 5;
+              const remainder = current % step;
+              const votesUntilNext =
+                remainder === 0 && current > 0 ? step : step - remainder;
+              const nextMilestone = current + votesUntilNext;
+              const nextRewardIndex = nextMilestone / step;
+              const nextType: RewardType =
+                nextRewardIndex % 2 === 1 ? 'joke' : 'image';
+              const nextLabel = nextType === 'joke' ? 'joke' : 'image';
+              const nextEmoji = nextType === 'joke' ? '🎭' : '🖼️';
+              const isAlmostThere = votesUntilNext === 1;
+              return (
+                <p
+                  className={`mt-4 text-center text-sm font-semibold ${
+                    isAlmostThere ? 'text-amber-700' : 'text-gray-900'
+                  }`}
+                >
+                  {isAlmostThere
+                    ? `1 more vote unlocks a ${nextLabel}! ${nextEmoji}`
+                    : `${votesUntilNext} more votes until your next ${nextLabel} ${nextEmoji}`}
+                </p>
+              );
+            })()}
           </div>
         )}
       </div>
