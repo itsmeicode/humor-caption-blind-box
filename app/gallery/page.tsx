@@ -44,6 +44,7 @@ export default function GalleryPage() {
   const [blindBoxVoteCount, setBlindBoxVoteCount] = useState(0);
   const [showBlindBox, setShowBlindBox] = useState(false);
   const [showArrowTip, setShowArrowTip] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [rewardType, setRewardType] = useState<RewardType>('joke');
   const [rewardOptions, setRewardOptions] = useState<RewardOption[]>([]);
   const [rewardError, setRewardError] = useState<string | null>(null);
@@ -74,6 +75,11 @@ export default function GalleryPage() {
           const tipKey = 'arrowVoteTipDismissed';
           const dismissed = window.localStorage.getItem(tipKey) === '1';
           if (!dismissed) setShowArrowTip(true);
+
+          const onboardingKey = 'onboardingDismissed';
+          const onboardingDismissed =
+            window.localStorage.getItem(onboardingKey) === '1';
+          if (!onboardingDismissed) setShowOnboarding(true);
         }
 
         const {
@@ -466,7 +472,77 @@ export default function GalleryPage() {
           </button>
         </div>
       </div>
+      <button
+        type="button"
+        aria-label="Show how Caption Blind Box works"
+        title="How it works"
+        onClick={() => setShowOnboarding(true)}
+        className="fixed bottom-4 left-4 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-indigo-300 bg-white text-base font-bold text-indigo-700 shadow-md hover:bg-indigo-50"
+      >
+        ?
+      </button>
       <div className="w-full max-w-2xl">
+        {showOnboarding && !showBlindBox && (
+          <div className="mb-6 rounded-2xl border border-indigo-200 bg-indigo-50 p-5">
+            <div className="mb-4 flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-base font-semibold text-indigo-950">
+                  How Caption Blind Box works
+                </h2>
+                <p className="mt-1 text-xs text-indigo-900">
+                  Three steps to start collecting and matching.
+                </p>
+                <p className="mt-1 text-xs text-indigo-900">
+                  You can re-open this anytime with the{' '}
+                  <span className="font-semibold">?</span> button in the
+                  bottom-left corner.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowOnboarding(false);
+                  if (typeof window !== 'undefined') {
+                    window.localStorage.setItem('onboardingDismissed', '1');
+                  }
+                }}
+                className="rounded-md border border-indigo-300 bg-white px-3 py-1 text-xs font-medium text-indigo-900 hover:bg-indigo-100"
+              >
+                Got it
+              </button>
+            </div>
+            <ol className="grid gap-3 sm:grid-cols-3">
+              <li className="rounded-xl bg-white/70 p-3">
+                <p className="text-2xl">🗳️</p>
+                <p className="mt-1 text-sm font-semibold text-indigo-950">
+                  1. Vote
+                </p>
+                <p className="mt-1 text-xs text-indigo-900">
+                  Rate captions to tell us which ones land.
+                </p>
+              </li>
+              <li className="rounded-xl bg-white/70 p-3">
+                <p className="text-2xl">🎁</p>
+                <p className="mt-1 text-sm font-semibold text-indigo-950">
+                  2. Unlock
+                </p>
+                <p className="mt-1 text-xs text-indigo-900">
+                  Every 5 votes opens a blind box — alternating jokes and
+                  images.
+                </p>
+              </li>
+              <li className="rounded-xl bg-white/70 p-3">
+                <p className="text-2xl">🎯</p>
+                <p className="mt-1 text-sm font-semibold text-indigo-950">
+                  3. Match
+                </p>
+                <p className="mt-1 text-xs text-indigo-900">
+                  Pair a joke with an image in My Collection to score.
+                </p>
+              </li>
+            </ol>
+          </div>
+        )}
         {showBlindBox ? (
           <div className="space-y-3">
             {rewardError && (
