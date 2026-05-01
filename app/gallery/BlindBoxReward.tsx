@@ -21,19 +21,37 @@ const BOX_LABELS = ['Pick me!', 'Pick me!', 'Pick me!', 'Pick me!'] as const;
 type BlindBoxRewardProps = {
   rewardType: RewardType;
   options: RewardOption[];
+  unlockedJokesCount: number;
+  unlockedImagesCount: number;
   onPick: (picked: RewardOption) => void;
   onContinue: () => void;
+  onGoToCollection: (picked: RewardOption) => void;
 };
 
 export function BlindBoxReward({
   rewardType,
   options,
+  unlockedJokesCount,
+  unlockedImagesCount,
   onPick,
   onContinue,
+  onGoToCollection,
 }: BlindBoxRewardProps) {
   const [picked, setPicked] = useState<number | null>(null);
 
   const reveal = picked === null ? null : options[picked] ?? null;
+
+  const projectedJokes =
+    unlockedJokesCount + (reveal?.type === 'joke' ? 1 : 0);
+  const projectedImages =
+    unlockedImagesCount + (reveal?.type === 'image' ? 1 : 0);
+  const canMatchAfterSave = projectedJokes > 0 && projectedImages > 0;
+  const missingType: 'joke' | 'image' | null =
+    projectedJokes === 0
+      ? 'joke'
+      : projectedImages === 0
+        ? 'image'
+        : null;
 
   return (
     <div className="flex w-full flex-col items-center rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
@@ -53,7 +71,13 @@ export function BlindBoxReward({
               key={i}
               type="button"
               disabled={disabled}
-              onClick={() => setPicked(i)}
+              onClick={() => {
+                const opt = options[i];
+                if (opt) {
+                  onPick(opt);
+                  setPicked(i);
+                }
+              }}
               className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-10 text-sm font-medium text-gray-900 transition-all hover:-translate-y-0.5 hover:bg-gray-100 hover:shadow-md active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none"
             >
               {BOX_LABELS[i] ?? 'Blind Box'}
@@ -76,18 +100,41 @@ export function BlindBoxReward({
               <p className="mt-2 text-sm text-red-700">Missing reward option.</p>
             )}
           </div>
-          <div className="mt-4 flex items-center justify-end gap-3">
+          <div className="mt-4 rounded-xl border border-indigo-200 bg-indigo-50 p-3 text-sm">
+            <p className="font-semibold text-indigo-950">
+              Your collection: {projectedJokes}{' '}
+              {projectedJokes === 1 ? 'joke' : 'jokes'} 🎭 ·{' '}
+              {projectedImages}{' '}
+              {projectedImages === 1 ? 'image' : 'images'} 🖼️
+            </p>
+            <p className="mt-1 text-indigo-900">
+              {canMatchAfterSave
+                ? 'You have at least one joke and one image — pair them in My Collection to score!'
+                : missingType === 'joke'
+                  ? 'Keep voting to unlock a joke to pair with this image.'
+                  : 'Keep voting to unlock an image to pair with this joke.'}
+            </p>
+          </div>
+          <div className="mt-4 flex flex-col items-stretch gap-2 sm:flex-row sm:justify-end">
             <button
               type="button"
-              onClick={() => {
-                const selected = reveal;
-                if (selected) onPick(selected);
-                onContinue();
-              }}
-              className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800"
+              onClick={onContinue}
+              className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-50"
             >
-              Save reward
+              Keep voting
             </button>
+            {canMatchAfterSave && (
+              <button
+                type="button"
+                onClick={() => {
+                  const selected = reveal;
+                  if (selected) onGoToCollection(selected);
+                }}
+                className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800"
+              >
+                Go to Collection
+              </button>
+            )}
           </div>
         </div>
       )}

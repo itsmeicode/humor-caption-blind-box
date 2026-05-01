@@ -164,6 +164,18 @@ export default function CollectionPage() {
       </div>
 
       <div className="w-full max-w-4xl space-y-6">
+        {jokes.length > 0 && images.length > 0 && matches.length === 0 && (
+          <div className="rounded-2xl border border-indigo-200 bg-indigo-50 p-5">
+            <p className="text-sm font-semibold text-indigo-950">
+              Ready for your first match!
+            </p>
+            <p className="mt-1 text-sm text-indigo-900">
+              Pick one joke and one image below, then hit{' '}
+              <span className="font-semibold">Create Match</span> to score the
+              pair.
+            </p>
+          </div>
+        )}
         {error && (
           <p className="rounded-md bg-red-50 p-3 text-sm text-red-700">
             {error}

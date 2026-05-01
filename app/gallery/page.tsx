@@ -553,8 +553,18 @@ export default function GalleryPage() {
             <BlindBoxReward
               rewardType={rewardType}
               options={rewardOptions}
+              unlockedJokesCount={
+                readJson<JokeUnlock[]>(LS_KEYS.unlockedJokes, []).length
+              }
+              unlockedImagesCount={
+                readJson<ImageUnlock[]>(LS_KEYS.unlockedImages, []).length
+              }
               onPick={savePickedReward}
               onContinue={() => setShowBlindBox(false)}
+              onGoToCollection={() => {
+                setShowBlindBox(false);
+                router.push('/collection');
+              }}
             />
           </div>
         ) : (

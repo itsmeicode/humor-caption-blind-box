@@ -76,13 +76,12 @@ export function CaptionVoteControls({
         });
 
       if (insertError) {
-        console.error(insertError);
-
         if (insertError.code === '23505' && onVoted) {
           onVoted();
           return;
         }
 
+        console.error(insertError);
         setError(insertError.message);
         return;
       }
