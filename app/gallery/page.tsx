@@ -204,9 +204,8 @@ export default function GalleryPage() {
         .eq('is_public', true)
         .not('content', 'is', null)
         .neq('content', '')
-        .lt('id', caption.id)
         .order('like_count', { ascending: true, nullsFirst: false })
-        .order('id', { ascending: false })
+        .order('created_datetime_utc', { ascending: false })
         .limit(50);
 
       if (nextCaptionsError) {
