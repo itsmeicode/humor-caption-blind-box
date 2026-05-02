@@ -18,12 +18,14 @@ Caption Blind Box is a caption rating app with a “blind box” reward loop:
 ## Walkthrough
 
 1. Go to `/` and click **Enter the Blind Box Arcade** to sign in with Google.
-2. You’ll land in `/gallery`. Rate captions with:
+2. On your first visit to `/gallery`, a 3-step onboarding banner explains the loop: **Vote → Unlock → Match**. Dismiss with **Got it** (saved in localStorage). Re-open it anytime via the persistent **?** floating button in the bottom-left corner.
+3. Rate captions with:
    - Buttons (👍 / 👎), or
    - Keyboard arrows (**→** upvote, **←** downvote)
-3. Every **5 votes** unlocks a **Blind Box** reward (alternates joke rewards and image rewards).
-4. Go to `/collection` to view your unlocked **jokes** and **images**, then click **Create Match** to combine one joke + one image into a scored card.
-5. Go to `/upload` to upload your own image and generate captions. Uploaded images are added to your **Unlocked Images**, and the upload + captions are saved in **Upload History**.
+4. Below the vote buttons, an explicit countdown shows when the next reward unlocks (e.g. *"3 more votes until your next joke 🎭"*) and turns amber on the final vote (*"1 more vote unlocks a 🎭 joke!"*).
+5. Every **5 votes** unlocks a **Blind Box** reward (alternates joke rewards and image rewards). Picking a box saves the reward immediately, then shows a status panel (*"Your collection: X jokes 🎭 · Y images 🖼️"*) with a contextual next-step. When you have at least one of each, a **Go to Collection** button appears alongside **Keep voting**.
+6. Go to `/collection` to view your unlocked **jokes** and **images**. With items unlocked but no matches yet, an indigo *"Ready for your first match!"* callout shows the way. Click **Create Match** to combine one joke + one image into a scored card.
+7. Go to `/upload` to upload your own image and generate captions. Uploaded images are added to your **Unlocked Images**, and the upload + captions are saved in **Upload History**.
 
 ## Core functionality
 
@@ -36,6 +38,12 @@ Caption Blind Box is a caption rating app with a “blind box” reward loop:
 
 - Voting inserts into `caption_votes`.
 - Insert includes `created_by_user_id` and `modified_by_user_id` (required audit fields).
+- Captions are loaded ordered by `like_count ASC NULLS LAST` first, then `created_datetime_utc DESC` as tiebreaker. This data-driven ordering surfaces zero-engagement captions ahead of well-loved ones — motivated by the admin Caption Stats finding that ~89% of captions in the system have never received a vote.
+
+### Onboarding banner + persistent help
+
+- A 3-step "How Caption Blind Box works" banner auto-shows on first visit. Dismissal is persisted in `localStorage` (`onboardingDismissed`), so it does not reappear on subsequent visits.
+- A floating **?** button in the bottom-left corner re-opens the banner anytime without resetting the dismissal flag.
 
 ### Blind box rewards (no DB changes)
 
